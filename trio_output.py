@@ -2,9 +2,9 @@ import pandas
 import numpy as np
 
 
-def generate_family_list(family_id, df, mother_dataframe, father_dataframe, gender = ''):
+def generate_family_list(family_id, df, mother_dataframe, father_dataframe, gender='U'):
     temp_family_list = []
-    #check if mother and father dataframes are empty before assigning their Ids
+    # check if mother and father dataframes are empty before assigning their Ids
     if not mother_dataframe.empty:
         mother_id = 'IND' + str(mother_dataframe.iloc[0]['Subject'])
     else:
@@ -41,9 +41,6 @@ def generate_family_list(family_id, df, mother_dataframe, father_dataframe, gend
         cause_of_infertility = ''
         quantity = ''
 
-        # determine the gender of the child
-        if gender == '' and df.iloc[i]['Child'] == 'U':
-            gender = ''
 
         # generate the trio before appending it to the family list
         # only generate the trio if there exists both a father and mother for the child
@@ -64,14 +61,14 @@ def generate_family_list(family_id, df, mother_dataframe, father_dataframe, gend
         ugrp_subject_id = 'UGRP' + subject_id
 
         # append offspring to the family list
-        temp_family_list.append([family_id, ugrp_subject_id, gender, ugrp_mother_id, ugrp_father_id, hpo_term, mondo_terms, proband,
-                                 clinical_notes, ancestry, life_status, deceased, cause_of_death, age_of_death,
-                                 age_at_death_units, pregnancy, gestational_age, gestational_age_units,
-                                 pregnancy_termination,
-                                 spontangeous_abortion, still_birth, no_children_by_choice, infertile,
-                                 cause_of_infertility,
-                                 quantity])
-
+        temp_family_list.append(
+            [family_id, ugrp_subject_id, gender, ugrp_mother_id, ugrp_father_id, hpo_term, mondo_terms, proband,
+             clinical_notes, ancestry, life_status, deceased, cause_of_death, age_of_death,
+             age_at_death_units, pregnancy, gestational_age, gestational_age_units,
+             pregnancy_termination,
+             spontangeous_abortion, still_birth, no_children_by_choice, infertile,
+             cause_of_infertility,
+             quantity])
 
     return temp_family_list
 
@@ -81,9 +78,9 @@ def generate_trio(family_id, individual_id, mother_id, father_id, gender):
     analysis_id = family_id + '_' + mother_id + '_' + father_id + '_' + individual_id
 
     # add UGRP onto id names to be used for individual_id and sample_id
-    individual_id_UGRP = 'UGRP_' + individual_id
-    mother_id_UGRP = 'UGRP_' + mother_id
-    father_id_UGRP = 'UGRP_' + father_id
+    individual_id_UGRP = 'UGRP' + individual_id
+    mother_id_UGRP = 'UGRP' + mother_id
+    father_id_UGRP = 'UGRP' + father_id
     trio_list = []
 
     for i in range(3):
@@ -149,7 +146,7 @@ input_string = input_string.strip()
 
 # if no input is provided then use the default input of family 10
 if input_string == "":
-    #family_list = [10, 11, 22, 23, 25, 28, 33]
+    # family_list = [10, 11, 22, 23, 25, 28, 33]
     family_number = 'UGRP' + '10'
     input_string = 10
 # else read the user input
@@ -183,7 +180,7 @@ paternal_df = temp.loc[pandas.notna(temp['Paternal Grandparent'])]
 family_df_list.extend(generate_family_list(family_number, child_df, mother_df, father_df))
 
 # append mother to dataframe list
-if ('F' in  mother_df.Mother.item()):
+if ('F' in mother_df.Mother.item()):
     family_df_list.extend(
         generate_family_list(family_number, mother_df, maternal_df.loc[maternal_df['Maternal Grandparent'] == 'F'],
                              maternal_df.loc[maternal_df['Maternal Grandparent'] == 'M'], mother_df.Mother.item()))
@@ -197,45 +194,54 @@ if ('M' in father_df.Father.item()):
 # append paternal grandfather to dataframe list
 if ('M' in paternal_df['Paternal Grandparent'].values.tolist()):
     family_df_list.extend(
-        generate_family_list(family_number, paternal_df.loc[paternal_df['Paternal Grandparent'] == 'M'], pandas.DataFrame,
+        generate_family_list(family_number, paternal_df.loc[paternal_df['Paternal Grandparent'] == 'M'],
                              pandas.DataFrame,
-                             paternal_df.loc[paternal_df['Paternal Grandparent'] == 'M']['Paternal Grandparent'].item()))
+                             pandas.DataFrame,
+                             paternal_df.loc[paternal_df['Paternal Grandparent'] == 'M'][
+                                 'Paternal Grandparent'].item()))
 
 # append paternal grandmother to dataframe list
 if ('F' in paternal_df['Paternal Grandparent'].values.tolist()):
     family_df_list.extend(
-        generate_family_list(family_number, paternal_df.loc[paternal_df['Paternal Grandparent'] == 'F'], pandas.DataFrame,
+        generate_family_list(family_number, paternal_df.loc[paternal_df['Paternal Grandparent'] == 'F'],
                              pandas.DataFrame,
-                             paternal_df.loc[paternal_df['Paternal Grandparent'] == 'F']['Paternal Grandparent'].item()))
-
+                             pandas.DataFrame,
+                             paternal_df.loc[paternal_df['Paternal Grandparent'] == 'F'][
+                                 'Paternal Grandparent'].item()))
 
 # append maternal grandfather to dataframe list
 if ('M' in maternal_df['Maternal Grandparent'].values.tolist()):
     family_df_list.extend(
-        generate_family_list(family_number, maternal_df.loc[maternal_df['Maternal Grandparent'] == 'M'], pandas.DataFrame,
+        generate_family_list(family_number, maternal_df.loc[maternal_df['Maternal Grandparent'] == 'M'],
                              pandas.DataFrame,
-                             maternal_df.loc[maternal_df['Maternal Grandparent'] == 'M']['Maternal Grandparent'].item()))
+                             pandas.DataFrame,
+                             maternal_df.loc[maternal_df['Maternal Grandparent'] == 'M'][
+                                 'Maternal Grandparent'].item()))
 
 # append maternal grandmother to dataframe list
 if ('F' in maternal_df['Maternal Grandparent'].values.tolist()):
     family_df_list.extend(
-        generate_family_list(family_number, maternal_df.loc[maternal_df['Maternal Grandparent'] == 'F'], pandas.DataFrame,
+        generate_family_list(family_number, maternal_df.loc[maternal_df['Maternal Grandparent'] == 'F'],
                              pandas.DataFrame,
-                             maternal_df.loc[maternal_df['Maternal Grandparent'] == 'F']['Maternal Grandparent'].item()))
+                             pandas.DataFrame,
+                             maternal_df.loc[maternal_df['Maternal Grandparent'] == 'F'][
+                                 'Maternal Grandparent'].item()))
 
 # generate pedigree
 pedigree_df = pandas.DataFrame(family_df_list,
-                           columns=['Family ID', 'Individual ID', 'Sex',
-                                    'Mother ID', 'Father ID', 'HPO terms', 'MONDO terms',
-                                    'Proband', 'Clinical Notes', 'Ancestry', 'Life Status', 'Deceased', 'Cause of death',
-                                    'Age at death', 'Age at death units', 'Pregnancy', 'Gestational age',
-                                    'Gestational age units', 'Is termination of pregnancy', 'Spontaneous abortion',
-                                    'Still birth', 'No children by choice', 'Infertile', 'Cause of infertility', 'Quantity'])
+                               columns=['Family ID', 'Individual ID', 'Sex',
+                                        'Mother ID', 'Father ID', 'HPO terms', 'MONDO terms',
+                                        'Proband', 'Clinical Notes', 'Ancestry', 'Life Status', 'Deceased',
+                                        'Cause of death',
+                                        'Age at death', 'Age at death units', 'Pregnancy', 'Gestational age',
+                                        'Gestational age units', 'Is termination of pregnancy', 'Spontaneous abortion',
+                                        'Still birth', 'No children by choice', 'Infertile', 'Cause of infertility',
+                                        'Quantity'])
 
 print(pedigree_df)
 
 # generate a writer for excel formatting
-writer = pandas.ExcelWriter(family_number + '_pedigree'+ ".xlsx", engine='xlsxwriter')
+writer = pandas.ExcelWriter(family_number + '_pedigree' + ".xlsx", engine='xlsxwriter')
 pedigree_df.to_excel(writer, sheet_name='Sheet1', startrow=1, index=False, header=False)
 workbook = writer.book
 worksheet = writer.sheets['Sheet1']
@@ -246,5 +252,3 @@ for col_num, value in enumerate(pedigree_df.columns.values):
     worksheet.write(0, col_num, value, header_format)
     worksheet.set_column(0, col_num, 15)
 writer.save()
-
-
