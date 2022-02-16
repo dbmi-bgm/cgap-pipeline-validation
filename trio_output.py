@@ -1,9 +1,11 @@
 import pandas
 import numpy as np
+from pandas import DataFrame
 
 
 def generate_family_list(family_id, df, mother_dataframe, father_dataframe, gender='U'):
     temp_family_list = []
+    proband_individuals = []
     # check if mother and father dataframes are empty before assigning their Ids
     if not mother_dataframe.empty:
         mother_id = 'IND' + str(mother_dataframe.iloc[0]['Subject'])
@@ -41,11 +43,11 @@ def generate_family_list(family_id, df, mother_dataframe, father_dataframe, gend
         cause_of_infertility = ''
         quantity = ''
 
-
         # generate the trio before appending it to the family list
         # only generate the trio if there exists both a father and mother for the child
         if not mother_dataframe.empty and not father_dataframe.empty:
             generate_trio(family_id, subject_id, mother_id, father_id, gender)
+            proband_individuals.append('UGRP' + subject_id)
 
         # add UGRP for individuals to be used in the pedigree excel sheet
         if mother_id is not '':
@@ -70,7 +72,7 @@ def generate_family_list(family_id, df, mother_dataframe, father_dataframe, gend
              cause_of_infertility,
              quantity])
 
-    return temp_family_list
+    return temp_family_list, proband_individuals
 
 
 def generate_trio(family_id, individual_id, mother_id, father_id, gender):
@@ -164,6 +166,7 @@ temp = temp.rename({'Mother.1': 'Mother', 'Father.1': 'Father'}, axis='columns')
 
 family_df = pandas.DataFrame()
 family_df_list = []
+proband_list = []
 
 # extract children
 child_df = temp.loc[pandas.notna(temp['Child'])]
@@ -177,78 +180,101 @@ maternal_df = temp.loc[pandas.notna(temp['Maternal Grandparent'])]
 paternal_df = temp.loc[pandas.notna(temp['Paternal Grandparent'])]
 
 # append children to dataframe list
-family_df_list.extend(generate_family_list(family_number, child_df, mother_df, father_df))
+family_temp_list, proband_temp_list = generate_family_list(family_number, child_df, mother_df, father_df)
+family_df_list.extend(family_temp_list)
+proband_list.extend(proband_temp_list)
 
 # append mother to dataframe list
 if ('F' in mother_df.Mother.item()):
-    family_df_list.extend(
-        generate_family_list(family_number, mother_df, maternal_df.loc[maternal_df['Maternal Grandparent'] == 'F'],
-                             maternal_df.loc[maternal_df['Maternal Grandparent'] == 'M'], mother_df.Mother.item()))
+    family_temp_list, proband_temp_list = generate_family_list(family_number, mother_df,
+                                                               maternal_df.loc[
+                                                                   maternal_df['Maternal Grandparent'] == 'F'],
+                                                               maternal_df.loc[
+                                                                   maternal_df['Maternal Grandparent'] == 'M'],
+                                                               mother_df.Mother.item())
+
+    family_df_list.extend(family_temp_list)
+    proband_list.extend(proband_temp_list)
 
 # append father to dataframe list
 if ('M' in father_df.Father.item()):
-    family_df_list.extend(
-        generate_family_list(family_number, father_df, paternal_df.loc[paternal_df['Paternal Grandparent'] == 'F'],
-                             paternal_df.loc[paternal_df['Paternal Grandparent'] == 'M'], father_df.Father.item()))
+    family_temp_list, proband_temp_list = generate_family_list(family_number, father_df,
+                                                               paternal_df.loc[
+                                                                   paternal_df['Paternal Grandparent'] == 'F'],
+                                                               paternal_df.loc[
+                                                                   paternal_df['Paternal Grandparent'] == 'M'],
+                                                               father_df.Father.item())
+
+    family_df_list.extend(family_temp_list)
+    proband_list.extend(proband_temp_list)
 
 # append paternal grandfather to dataframe list
 if ('M' in paternal_df['Paternal Grandparent'].values.tolist()):
-    family_df_list.extend(
-        generate_family_list(family_number, paternal_df.loc[paternal_df['Paternal Grandparent'] == 'M'],
-                             pandas.DataFrame,
-                             pandas.DataFrame,
-                             paternal_df.loc[paternal_df['Paternal Grandparent'] == 'M'][
-                                 'Paternal Grandparent'].item()))
+    family_temp_list, _ = generate_family_list(family_number,
+                                               paternal_df.loc[paternal_df['Paternal Grandparent'] == 'M'],
+                                               pandas.DataFrame, pandas.DataFrame,
+                                               paternal_df.loc[paternal_df['Paternal Grandparent'] == 'M'][
+                                                   'Paternal Grandparent'].item())
+
+    family_df_list.extend(family_temp_list)
 
 # append paternal grandmother to dataframe list
 if ('F' in paternal_df['Paternal Grandparent'].values.tolist()):
-    family_df_list.extend(
-        generate_family_list(family_number, paternal_df.loc[paternal_df['Paternal Grandparent'] == 'F'],
-                             pandas.DataFrame,
-                             pandas.DataFrame,
-                             paternal_df.loc[paternal_df['Paternal Grandparent'] == 'F'][
-                                 'Paternal Grandparent'].item()))
+    family_temp_list, _ = generate_family_list(family_number,
+                                               paternal_df.loc[paternal_df['Paternal Grandparent'] == 'F'],
+                                               pandas.DataFrame, pandas.DataFrame,
+                                               paternal_df.loc[paternal_df['Paternal Grandparent'] == 'F'][
+                                                   'Paternal Grandparent'].item())
+    family_df_list.extend(family_temp_list)
 
 # append maternal grandfather to dataframe list
 if ('M' in maternal_df['Maternal Grandparent'].values.tolist()):
-    family_df_list.extend(
-        generate_family_list(family_number, maternal_df.loc[maternal_df['Maternal Grandparent'] == 'M'],
-                             pandas.DataFrame,
-                             pandas.DataFrame,
-                             maternal_df.loc[maternal_df['Maternal Grandparent'] == 'M'][
-                                 'Maternal Grandparent'].item()))
+    family_temp_list, _ = generate_family_list(family_number,
+                                               maternal_df.loc[maternal_df['Maternal Grandparent'] == 'M'],
+                                               pandas.DataFrame,
+                                               pandas.DataFrame,
+                                               maternal_df.loc[maternal_df['Maternal Grandparent'] == 'M'][
+                                                   'Maternal Grandparent'].item())
+    family_df_list.extend(family_temp_list)
 
 # append maternal grandmother to dataframe list
 if ('F' in maternal_df['Maternal Grandparent'].values.tolist()):
-    family_df_list.extend(
-        generate_family_list(family_number, maternal_df.loc[maternal_df['Maternal Grandparent'] == 'F'],
-                             pandas.DataFrame,
-                             pandas.DataFrame,
-                             maternal_df.loc[maternal_df['Maternal Grandparent'] == 'F'][
-                                 'Maternal Grandparent'].item()))
+    family_temp_list, _ = generate_family_list(family_number,
+                                               maternal_df.loc[maternal_df['Maternal Grandparent'] == 'F'],
+                                               pandas.DataFrame,
+                                               pandas.DataFrame,
+                                               maternal_df.loc[maternal_df['Maternal Grandparent'] == 'F'][
+                                                   'Maternal Grandparent'].item())
+    family_df_list.extend(family_temp_list)
 
 # generate pedigree
-pedigree_df = pandas.DataFrame(family_df_list,
-                               columns=['Family ID', 'Individual ID', 'Sex',
-                                        'Mother ID', 'Father ID', 'HPO terms', 'MONDO terms',
-                                        'Proband', 'Clinical Notes', 'Ancestry', 'Life Status', 'Deceased',
-                                        'Cause of death',
-                                        'Age at death', 'Age at death units', 'Pregnancy', 'Gestational age',
-                                        'Gestational age units', 'Is termination of pregnancy', 'Spontaneous abortion',
-                                        'Still birth', 'No children by choice', 'Infertile', 'Cause of infertility',
-                                        'Quantity'])
-
-print(pedigree_df)
+pedigree_df: DataFrame = pandas.DataFrame(family_df_list,
+                                          columns=['Family ID', 'Individual ID', 'Sex',
+                                                   'Mother ID', 'Father ID', 'HPO terms', 'MONDO terms',
+                                                   'Proband', 'Clinical Notes', 'Ancestry', 'Life Status', 'Deceased',
+                                                   'Cause of death',
+                                                   'Age at death', 'Age at death units', 'Pregnancy', 'Gestational age',
+                                                   'Gestational age units', 'Is termination of pregnancy',
+                                                   'Spontaneous abortion',
+                                                   'Still birth', 'No children by choice', 'Infertile',
+                                                   'Cause of infertility',
+                                                   'Quantity'])
 
 # generate a writer for excel formatting
-writer = pandas.ExcelWriter(family_number + '_pedigree' + ".xlsx", engine='xlsxwriter')
-pedigree_df.to_excel(writer, sheet_name='Sheet1', startrow=1, index=False, header=False)
-workbook = writer.book
-worksheet = writer.sheets['Sheet1']
+for individual in proband_list:
+    writer = pandas.ExcelWriter(family_number + '_pedigree_' + individual + ".xlsx", engine='xlsxwriter')
+    # modify for the individual as the proband
+    pedigree_df.loc[pedigree_df["Individual ID"] == individual, "Proband"] = "Y"
+    pedigree_df.to_excel(writer, sheet_name='Sheet1', startrow=1, index=False, header=False)
+    # convert the proband back to 'N' after writing to excel
+    pedigree_df.loc[pedigree_df["Individual ID"] == individual, "Proband"] = "N"
 
-# modify the headers and set the column width to 30
-header_format = workbook.add_format({'bold': False, 'valign': 'left'})
-for col_num, value in enumerate(pedigree_df.columns.values):
-    worksheet.write(0, col_num, value, header_format)
-    worksheet.set_column(0, col_num, 15)
-writer.save()
+    workbook = writer.book
+    worksheet = writer.sheets['Sheet1']
+
+    # modify the headers and set the column width to 30
+    header_format = workbook.add_format({'bold': False, 'valign': 'left'})
+    for col_num, value in enumerate(pedigree_df.columns.values):
+        worksheet.write(0, col_num, value, header_format)
+        worksheet.set_column(0, col_num, 15)
+    writer.save()
