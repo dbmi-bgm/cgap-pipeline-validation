@@ -278,3 +278,19 @@ for individual in proband_list:
         worksheet.write(0, col_num, value, header_format)
         worksheet.set_column(0, col_num, 15)
     writer.save()
+
+
+# generate general pedigree for whole family where all individuals are not proband
+    writer = pandas.ExcelWriter(family_number + '_pedigree_' +  ".xlsx", engine='xlsxwriter')
+    pedigree_df.to_excel(writer, sheet_name='Sheet1', startrow=1, index=False, header=False)
+
+    workbook = writer.book
+    worksheet = writer.sheets['Sheet1']
+
+    # modify the headers and set the column width to 30
+    header_format = workbook.add_format({'bold': False, 'valign': 'left'})
+    for col_num, value in enumerate(pedigree_df.columns.values):
+        worksheet.write(0, col_num, value, header_format)
+        worksheet.set_column(0, col_num, 15)
+    writer.save()
+
