@@ -281,7 +281,7 @@ for individual in proband_list:
 
 
 # generate general pedigree for whole family where all individuals are not proband
-    writer = pandas.ExcelWriter(family_number + '_pedigree_' +  ".xlsx", engine='xlsxwriter')
+    writer = pandas.ExcelWriter(family_number + '_pedigree' +  ".xlsx", engine='xlsxwriter')
     pedigree_df.to_excel(writer, sheet_name='Sheet1', startrow=1, index=False, header=False)
 
     workbook = writer.book
