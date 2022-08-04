@@ -125,23 +125,28 @@ def main():
     # input file name separated by space
     input("To use the script would need the json file name from denovo granite analysis, an "
           "excel file containing column of individual ID number, file name for the individual and their "
-          "corresponding roles in the family. Press enter to continue\n")
-    file_name = input("Enter file name(s) (separated by space): ")
-    family_name = input("Enter family ID file: ")
-    excel_name = input("Enter excel file name: ")
-    is_children = input("Are these children files? (Y/N) ")
+          "corresponding roles in the family. An excel name for the outputted excel and whether if they are "
+          "children files. \n Press enter to continue\n")
+    commandline_input = sys.argv
+    file_name = commandline_input[1:len(commandline_input)-3]
+    family_name = commandline_input[len(commandline_input)-3]
+    excel_name = commandline_input[len(commandline_input)-2]
+    is_children = commandline_input[len(commandline_input)-1]
 
     if is_children.lower() == 'y':
         is_children= True
-    else:
+    elif is_children.lower() =='n' or is_children.lower()=='':
         is_children = False
+    else:
+        print("Wrong input please input Y/N" ,sys.stderr)
+        sys.exit()
 
     # only read parent or children and not both together
     if file_name == "":
         file_name = ["/Users/catherinesong/Documents/2022/Park_Lab/Family_10/denovo/parents/GAPFI931UKDP.novo.snv.json",
                      "/Users/catherinesong/Documents/2022/Park_Lab/Family_10/denovo/parents/GAPFIHVJRQXF.novo.snv.json"]
     else:
-        file_name = file_name.split(' ')
+        file_name = file_name
 
     if family_name == "":
         family_file = pd.read_csv(
