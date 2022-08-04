@@ -1,4 +1,7 @@
 import json
+import os.path
+import sys
+
 import pandas as pd
 
 def generate_values(df, no_gparents, gparents):
@@ -112,10 +115,17 @@ def write_to_excel(dataframe_list, file_name, sheet_name):
 
 def main():
     # input file name separated by space
-    file_name = input("Enter file name(s): ")
+    file_name = sys.argv[1]
+
     if file_name == '':
         file_name = '/Users/catherinesong/Documents/2022/Park_Lab/granite_het_filter/GAPFIEK1LK1A.het.snv.json'
-    excel_name = input("Enter excel file name: ")
+    elif not os.path.exists(file_name):
+        print("No such file '{}' exists!".format(file_name), file=sys.stderr)
+        print()
+        print("Input commandline as following \'python granite_het_automation.py het_file_name excel_file_name\n")
+        sys.exit(1)
+
+    excel_name = sys.argv[2]
     #file /Users/catherinesong/Documents/2022/Park_Lab/granite_het_filter/GAPFIEK1LK1A.het.snv.json
 
     #/Users/catherinesong/Downloads/Untitled.txt
