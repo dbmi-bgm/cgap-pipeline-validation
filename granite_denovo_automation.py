@@ -82,12 +82,12 @@ def calculate_percentage(df):
             sum_values = cumsum(df.loc[index].values[4:])
             if total == 0.0:
                 #if there was no value recorded for a particular level then assign 1.0 to avoid undefined values
-                percentage = [str(100.0) + '%']*len(sum_values)
+                percentage = [1.0]*len(sum_values)
             else:
                 #calculate the expected values
                 percentage = (sum_values/total)
                 #round to 2dp
-                percentage = [str(round(values * 100, 2)) + '%' for values in percentage]
+                #percentage = [str(round(values * 100, 2)) + '%' for values in percentage]
             percentage_df.loc[index] = [''] * 4 + percentage
     return percentage_df
 
