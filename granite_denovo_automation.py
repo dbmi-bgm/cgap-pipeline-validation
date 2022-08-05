@@ -205,6 +205,7 @@ def main():
         column_list = temp_df.columns.get_level_values(1)
         # find where the digit first appears
         print(column_list)
+        print(len([idx for idx, s in enumerate(column_list) if re.search(r"\d+", s)]))
         level_0 = list(temp_df.columns.get_level_values(0))
         #if len([idx for idx, s in enumerate(column_list) if re.search(r"\d+", s)]) > 1:
         digit_index = [idx for idx, s in enumerate(column_list) if re.search(r"\d+", s)][0]
