@@ -207,7 +207,6 @@ def main():
         # change ordering for level 2
         column_list = temp_df.columns.get_level_values(1)
         # find where the digit first appears
-
         level_0 = list(temp_df.columns.get_level_values(0))
         if len([idx for idx, s in enumerate(column_list) if re.search(r"\d+", s)]) > 1:
             digit_index = [idx for idx, s in enumerate(column_list) if re.search(r"\d+", s)][0]
@@ -227,6 +226,7 @@ def main():
             temp_df = pd.DataFrame(temp_df, columns=multi_cols)
         else:
             temp_df = temp_df
+        print(temp_df)
 
         # insert individual ID into the temporary dataframe
         identifier = [family_file.loc[family_file['File_ID'] == i].Individual_ID.values.item() for i in
