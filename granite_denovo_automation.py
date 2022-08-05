@@ -206,17 +206,17 @@ def main():
         # find where the digit first appears
         print(column_list)
         level_0 = list(temp_df.columns.get_level_values(0))
-        if len([idx for idx, s in enumerate(column_list) if re.search(r"\d+", s)]) > 1:
-            digit_index = [idx for idx, s in enumerate(column_list) if re.search(r"\d+", s)][0]
-            # sort the string columns first
-            string_columns = list(column_list[:digit_index])
-            string_columns.sort(reverse=True)
-            # sort non-string columns
-            digit_columns = list(column_list[digit_index:])
-            digit_columns.sort(key=num_sort)
+        #if len([idx for idx, s in enumerate(column_list) if re.search(r"\d+", s)]) > 1:
+        digit_index = [idx for idx, s in enumerate(column_list) if re.search(r"\d+", s)][0]
+        # sort the string columns first
+        string_columns = list(column_list[:digit_index])
+        string_columns.sort(reverse=True)
+        # sort non-string columns
+        digit_columns = list(column_list[digit_index:])
+        digit_columns.sort(key=num_sort)
 
-            # getting the level 1 and level 0 columns
-            level_1 = string_columns + digit_columns
+        # getting the level 1 and level 0 columns
+        level_1 = string_columns + digit_columns
 
         # create a new ordered column
         new_column_tuple = [(level_0[i], level_1[i]) for i in range(0, len(level_0))]
