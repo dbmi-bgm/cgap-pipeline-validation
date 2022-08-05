@@ -89,7 +89,7 @@ def calculate_percentage(df):
                 percentage = (sum_values/total)
                 #round to 2dp
             print(percentage)
-            percentage_df.loc[index] = [None, None, None, None] + percentage
+            percentage_df.loc[index] = [None, None, None, None] + [percentage]
     return percentage_df
 
 def write_to_excel(dataframe_list, name, row_to_hide=3):
