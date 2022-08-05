@@ -232,8 +232,8 @@ def main():
         # find the role of the individual within the family file
         role = [family_file.loc[family_file['File_ID'] == i].Individual.values.item() for i in temp_df.index.tolist()]
         # store the individual identifier and their role into the dataframe
-        temp_df.loc[temp_df['', 'individual_ID']] = identifier
-        temp_df.loc[temp_df['', 'role']] = role
+        temp_df.iloc[temp_df['', 'individual_ID']] = identifier
+        temp_df.iloc[temp_df['', 'role']] = role
 
         # reorder the column order
         temp_cols = temp_df.columns.tolist()
