@@ -8,7 +8,7 @@ import json
 import re
 from xlsxwriter import Workbook
 
-
+pd.options.mode.chained_assignment = None
 def read_file(filename):
     file = open(filename, "r")
     fileData = file.read()
