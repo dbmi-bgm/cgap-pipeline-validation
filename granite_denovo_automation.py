@@ -104,10 +104,10 @@ def write_to_excel(dataframe_list, name, row_to_hide=3):
             #adjust the length for the first column based on its values i.e. individual file names
             if column!=('',''):
                 if idx == 0:
-                    print(dataframe.index.to_list())
                     writer.sheets['Sheet 1'].set_column(idx, idx, len(max(dataframe.index.to_list(), key=len)) + 2)
 
                 # adjusts column width
+                print(list(column))
                 column_length = len(max(list(column))) + 2
                 writer.sheets['Sheet 1'].set_column(idx + 2, idx + 1, column_length)
 
