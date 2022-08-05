@@ -80,6 +80,7 @@ def calculate_percentage(df):
         if index != 'Sum':
             total = df.loc[index].values[2]
             sum_values = cumsum(df.loc[index].values[4:])
+            print(sum_values)
             if total == 0.0:
                 #if there was no value recorded for a particular level then assign 1.0 to avoid undefined values
                 percentage = [1.0]*len(sum_values)
