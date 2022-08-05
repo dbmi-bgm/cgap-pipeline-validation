@@ -226,7 +226,7 @@ def main():
             multi_cols = pd.MultiIndex.from_tuples(new_column_tuple)
             temp_df = pd.DataFrame(temp_df, columns=multi_cols)
         else:
-            temp_df = pd.DataFrame(temp_df, columns=level_0)
+            temp_df = temp_df
 
         # insert individual ID into the temporary dataframe
         identifier = [family_file.loc[family_file['File_ID'] == i].Individual_ID.values.item() for i in
