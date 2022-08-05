@@ -218,10 +218,8 @@ def main():
             # getting the level 1 and level 0 columns
             level_1 = string_columns + digit_columns
 
-            # create a new ordered column
-            new_column_tuple = [(level_0[i], level_1[i]) for i in range(0, len(level_0))]
-        else:
-            new_column_tuple = [(level_0[i], '') for i in range(0, len(level_0))]
+        # create a new ordered column
+        new_column_tuple = [(level_0[i], level_1[i]) for i in range(0, len(level_0))]
         multi_cols = pd.MultiIndex.from_tuples(new_column_tuple)
         temp_df = pd.DataFrame(temp_df, columns=multi_cols)
 
