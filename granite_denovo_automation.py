@@ -205,6 +205,7 @@ def main():
         column_list = temp_df.columns.get_level_values(1)
         # find where the digit first appears
         print(column_list)
+        print(level)
         digit_index = [idx for idx, s in enumerate(column_list) if re.search(r"\d+", s)][0]
         # sort the string columns first
         string_columns = list(column_list[:digit_index])
