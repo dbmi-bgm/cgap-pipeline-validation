@@ -87,6 +87,7 @@ def calculate_percentage(df):
                 #calculate the expected values
                 percentage = (sum_values/total)
                 #round to 2dp
+            print(percentage)
             percentage_df.loc[index] = [None] * 4 + [percentage]
     return percentage_df
 
