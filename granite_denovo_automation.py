@@ -75,11 +75,11 @@ def calculate_percentage(df):
     #calculates the percentage for each of the individual
     percentage_index = pd.MultiIndex.from_tuples([('', '')]* 4 + df.columns.to_list()[4: ])
     percentage_df = pd.DataFrame(columns=percentage_index)
-
+    print(df)
     for index in df.index:
         if index != 'Sum':
             total = df.loc[index].values[2]
-            sum_values = list(cumsum(df.loc[index].values[4:]))
+            sum_values = cumsum(df.loc[index].values[4:])
             if total == 0.0:
                 #if there was no value recorded for a particular level then assign 1.0 to avoid undefined values
                 percentage = [1.0]*len(sum_values)
