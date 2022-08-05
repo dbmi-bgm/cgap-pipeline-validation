@@ -104,7 +104,9 @@ def write_to_excel(dataframe_list, name, row_to_hide=3):
             #adjust the length for the first column based on its values i.e. individual file names
             if column!=('',''):
                 if idx == 0:
+                    print(dataframe.index.to_list())
                     writer.sheets['Sheet 1'].set_column(idx, idx, len(max(dataframe.index.to_list(), key=len)) + 2)
+
                 # adjusts column width
                 column_length = len(max(list(column))) + 2
                 writer.sheets['Sheet 1'].set_column(idx + 2, idx + 1, column_length)
@@ -224,8 +226,6 @@ def main():
             temp_df = pd.DataFrame(temp_df, columns=multi_cols)
         else:
             temp_df = pd.DataFrame(temp_df, columns=level_0)
-            print(temp_df.index.to_list())
-            print(max(temp_df.index.to_list()))
 
         # insert individual ID into the temporary dataframe
         identifier = [family_file.loc[family_file['File_ID'] == i].Individual_ID.values.item() for i in
