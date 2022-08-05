@@ -87,6 +87,7 @@ def calculate_percentage(df):
                 #calculate the expected values
                 percentage = (sum_values/total)
                 #round to 2dp
+            percentage_df.loc[index] = [None] * 4 + [percentage]
     return percentage_df
 
 def write_to_excel(dataframe_list, name, row_to_hide=3):
