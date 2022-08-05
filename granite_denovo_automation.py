@@ -250,7 +250,6 @@ def main():
 
         #calculate the percentages for the children and write to file
         level = level.replace(" ", "")
-        print(level)
         if is_children:
             percentage_df = calculate_percentage(temp_df)
 
