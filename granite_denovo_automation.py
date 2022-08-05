@@ -224,6 +224,8 @@ def main():
             temp_df = pd.DataFrame(temp_df, columns=multi_cols)
         else:
             temp_df = pd.DataFrame(temp_df, columns=level_0)
+            print(temp_df.index.to_list())
+            print(max(temp_df.index.to_list()))
 
         # insert individual ID into the temporary dataframe
         identifier = [family_file.loc[family_file['File_ID'] == i].Individual_ID.values.item() for i in
