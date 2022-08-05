@@ -224,9 +224,6 @@ def main():
             new_column_tuple = [(level_0[i], level_1[i]) for i in range(0, len(level_0))]
             multi_cols = pd.MultiIndex.from_tuples(new_column_tuple)
             temp_df = pd.DataFrame(temp_df, columns=multi_cols)
-        # else:
-        #     temp_df = temp_df
-        # print(temp_df)
 
         # insert individual ID into the temporary dataframe
         identifier = [family_file.loc[family_file['File_ID'] == i].Individual_ID.values.item() for i in
@@ -235,8 +232,8 @@ def main():
         # find the role of the individual within the family file
         role = [family_file.loc[family_file['File_ID'] == i].Individual.values.item() for i in temp_df.index.tolist()]
         # store the individual identifier and their role into the dataframe
-        temp_df['', 'individual_ID'] = identifier
-        temp_df['', 'role'] = role
+        temp_df.loc['', 'individual_ID'] = identifier
+        temp_df.loc['', 'role'] = role
 
         # reorder the column order
         temp_cols = temp_df.columns.tolist()
