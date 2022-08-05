@@ -249,7 +249,7 @@ def main():
             temp_df.at['Sum', column] = temp_df[column].sum()
 
         #calculate the percentages for the children and write to file
-        level = level.strip()
+        level = level.rstrip()
         print(level)
         if is_children:
             percentage_df = calculate_percentage(temp_df)
