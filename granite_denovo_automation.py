@@ -75,21 +75,20 @@ def calculate_percentage(df):
     #calculates the percentage for each of the individual
     percentage_index = pd.MultiIndex.from_tuples([('', '')]* 4 + df.columns.to_list()[4: ])
     percentage_df = pd.DataFrame(columns=percentage_index)
-    print(df)
+
     for index in df.index:
         if index != 'Sum':
             total = df.loc[index].values[2]
             sum_values = cumsum(df.loc[index].values[4:])
-            print(sum_values)
             if total == 0.0:
                 #if there was no value recorded for a particular level then assign 1.0 to avoid undefined values
                 percentage = [1.0]*len(sum_values)
             else:
                 #calculate the expected values
                 percentage = (sum_values/total)
-                #round to 2dp
-            print(percentage)
-            percentage_df.loc[index] = [None, None, None, None] + [percentage]
+            percentage = list(percentage)
+            percentage_df.loc[index] = [None]*len(df.loc[index].values[:4]) + percentage
+
     return percentage_df
 
 def write_to_excel(dataframe_list, name, row_to_hide=3):
