@@ -166,7 +166,7 @@ def main():
     filtered_df = [ng_filtered_df, g_filtered_df]
 
     write_to_excel(non_filtered_df, excel_name + '_het_all_variants', 'all variants')
-    write_to_excel(filtered_df, excel_name + 'het_known_variants', 'known variants')
+    write_to_excel(filtered_df, excel_name + '_het_known_variants', 'known variants')
 
     # with pd.option_context('display.max_rows', None, 'display.max_columns', None):
     #     print(ng_df)
