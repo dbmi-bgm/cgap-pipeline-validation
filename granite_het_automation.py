@@ -85,7 +85,8 @@ def generate_columns(df):
 def write_to_excel(dataframe_list, file_name, sheet_name):
     row = 0
     writer = pd.ExcelWriter(file_name + '.xlsx')
-
+    higher_precision = 0
+    lower_precision = 0
     for dataframe in dataframe_list:
         dataframe.to_excel(writer, sheet_name, startrow=row)
         #hide the extra row generated
@@ -100,8 +101,22 @@ def write_to_excel(dataframe_list, file_name, sheet_name):
         writer.sheets[sheet_name].set_row(6 + row, None, percentage)
         writer.sheets[sheet_name].set_row(7 + row, None, percentage)
         writer.sheets[sheet_name].write(7 + row, 2, 'Average', bold)
-        writer.sheets[sheet_name].write(8 + row, 3, 1-dataframe.iloc[-1,2], percentage)
-        writer.sheets[sheet_name].write(8 + row, len(dataframe.columns), 1-dataframe.iloc[-1, len(dataframe.columns)-1], percentage)
+
+        if row == 0:
+            writer.sheets[sheet_name].write(8 + row, 3, 1-dataframe.iloc[-1,2], percentage)
+            higher_precision = 1-dataframe.iloc[-1,2]
+            writer.sheets[sheet_name].write(8 + row, len(dataframe.columns), 1-dataframe.iloc[-1, len(dataframe.columns)-1], percentage)
+            lower_precision = 1-dataframe.iloc[-1, len(dataframe.columns)-1]
+            writer.sheets[sheet_name].write(10 + row, 2, "Range of Precision:", bold)
+            writer.sheets[sheet_name].write(10 + row, 3, lower_precision, percentage)
+            writer.sheets[sheet_name].write(10 + row, 4, "~", bold)
+            writer.sheets[sheet_name].write(10 + row, 5, higher_precision, percentage)
+
+        else:
+            writer.sheets[sheet_name].write(9 + row, 2, "Corrected Range of Precision:", bold)
+            writer.sheets[sheet_name].write(9 + row, 3, lower_precision-dataframe.iloc[-1,2], percentage)
+            writer.sheets[sheet_name].write(9 + row, 4, "~", bold)
+            writer.sheets[sheet_name].write(9 + row, 5, higher_precision-dataframe.iloc[-1,2], percentage)
 
         #iterate through
         for idx, column in enumerate(dataframe.columns):
@@ -116,7 +131,7 @@ def write_to_excel(dataframe_list, file_name, sheet_name):
             writer.sheets[sheet_name].set_column(idx + 2, idx + 1, column_length)
 
         #adjust length for the row to write the next dataframe within list
-        row = row + len(dataframe.index) + dataframe.columns.nlevels + 4
+        row = row + len(dataframe.index) + dataframe.columns.nlevels + 6
 
     writer.save()
 
