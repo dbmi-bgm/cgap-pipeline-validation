@@ -43,13 +43,18 @@ def generate_values(df, no_gparents, gparents):
 
         #calculate percentage for each individual
         percentage_ngrandparent.extend([0.00 if value == 0 else value/total for value in ngrandparent_value_list])
+        percentage_ngrandparent.append(sum(percentage_ngrandparent[3:]))
+
         percentage_grandparent.extend([0.00 if value == 0 else value/total for value in grandparent_value_list])
+        percentage_grandparent.append(sum(percentage_grandparent[3:]))
 
         ngrandparents_list.append(temp_ngrandparents)
         grandparents_list.append(temp_grandparents)
 
         percentage_ngrandparents_list.append(percentage_ngrandparent)
+
         percentage_grandparents_list.append(percentage_grandparent)
+
 
     average_ngp = [(x+y)/2 if x!='' and y!='' else '' for x,y in zip(*percentage_ngrandparents_list)]
     average_gp = [(x+y)/2 if x!='' and y!='' else '' for x,y in zip(*percentage_grandparents_list)]
@@ -71,8 +76,8 @@ def generate_columns(df):
             if int(column) > max_number:
                 max_number = int(column)
 
-    multindex_ng_tuple = [('','sample_name'),('','total in parents'), ('', 'not in grandparents')] + [('in siblings', int(i))for i in range(0, max_number+1)]
-    multindex_g_tuple = [('','sample_name'),('','total in parents'), ('', 'in grandparents')] + [('in siblings', int(i))for i in range(0, max_number+1)]
+    multindex_ng_tuple = [('','sample_name'),('','total in parents'), ('', 'not in grandparents')] + [('in siblings', int(i))for i in range(0, max_number+1)] + [('', 'Sum')]
+    multindex_g_tuple = [('','sample_name'),('','total in parents'), ('', 'in grandparents')] + [('in siblings', int(i))for i in range(0, max_number+1)] + [('', 'Sum')]
     ng_df_index = pd.MultiIndex.from_tuples(multindex_ng_tuple)
     g_df_index = pd.MultiIndex.from_tuples(multindex_g_tuple)
     return ng_df_index, g_df_index
@@ -86,7 +91,7 @@ def write_to_excel(dataframe_list, file_name, sheet_name):
         #hide the extra row generated
         writer.sheets[sheet_name].set_row(2 + row, None, None, {'hidden': True})
         #add name for the first column as it will be hidden
-        bold   = writer.book.add_format({'bold': True, 'align': 'center'})
+        bold = writer.book.add_format({'bold': True, 'align': 'center'})
         writer.sheets[sheet_name].write(1 + row, 0, 'sample_name', bold)
 
         #add percentage formatting for the last three rows of the dataframe
@@ -95,6 +100,8 @@ def write_to_excel(dataframe_list, file_name, sheet_name):
         writer.sheets[sheet_name].set_row(6 + row, None, percentage)
         writer.sheets[sheet_name].set_row(7 + row, None, percentage)
         writer.sheets[sheet_name].write(7 + row, 2, 'Average', bold)
+        writer.sheets[sheet_name].write(8 + row, 3, 1-dataframe.iloc[-1,2], percentage)
+        writer.sheets[sheet_name].write(8 + row, len(dataframe.columns), 1-dataframe.iloc[-1, len(dataframe.columns)-1], percentage)
 
         #iterate through
         for idx, column in enumerate(dataframe.columns):
@@ -102,14 +109,14 @@ def write_to_excel(dataframe_list, file_name, sheet_name):
                 writer.sheets[sheet_name].set_column(idx, idx, len(max(list(column))) + 2)
             # adjusts column width
             if 'in siblings' not in list(column):
-                column_length = len(max(list(column))) + 2
+                column_length = len(max(list(column))) + 8
             else:
                 #set the column width as in sibling length if already present in the column
                 column_length = len('in siblings')
             writer.sheets[sheet_name].set_column(idx + 2, idx + 1, column_length)
 
         #adjust length for the row to write the next dataframe within list
-        row = row + len(dataframe.index) + dataframe.columns.nlevels + 3
+        row = row + len(dataframe.index) + dataframe.columns.nlevels + 4
 
     writer.save()
 
