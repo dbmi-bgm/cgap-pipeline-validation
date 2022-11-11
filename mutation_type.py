@@ -14,9 +14,22 @@ else:
             sys.exit(0)
 
 mutation_change_dict = dict()
+exportfile = open('Mutation Changes.txt', 'w')
+
+
+
+
 # iterate through each file
 for file in filename:
-    #file = open('Mutation Changes,txt', 'w')
+    exportfile.write(file[:file.index('.')])
+    exportfile.write('\n')
+
+    #write header for file
+    header = subprocess.check_output('gunzip -c ' + filename[0] + '| grep \'#CHROM\'', shell=True).splitlines()
+    header = header[0].decode('utf-8').split('\t')[:5]
+    exportfile.write(','.join(header))
+    exportfile.write('\n')
+
     # extract element with novoPP >= 0.9 only from vcf files
     if '.vcf.gz' in file:
         mutation_list = subprocess.check_output('gunzip -c ' + file + '| grep \'novoPP=0.9\'', shell=True).splitlines()
@@ -26,11 +39,16 @@ for file in filename:
             mutation = mutation.decode('utf-8').split('\t')
             mutation = mutation[:5]
             print(mutation)
+            exportfile.write(','.join(mutation))
+            exportfile.write('\n')
             mutation_change = ' > '.join(mutation[-2:])
             if mutation_change in mutation_change_dict:
                 mutation_change_dict[mutation_change] += 1
             else:
                 mutation_change_dict[mutation_change] = 1
+
+        exportfile.write('\n')
+exportfile.close()
 
 
 print(mutation_change_dict)
