@@ -55,6 +55,8 @@ for file in filename:
                     mutation_change_dict[mutation_change] = 1
 
         exportfile.write('\n')
+
+exportfile.write(mutation_change_dict)
 exportfile.close()
 
 
