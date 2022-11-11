@@ -30,14 +30,14 @@ for file in filename:
 
     #write header for file
     header = subprocess.check_output('gunzip -c ' + filename[0] + '| grep \'#CHROM\'', shell=True).splitlines()
-    if len(header) > 1:
-        header = header[0].decode('utf-8').split('\t')[:5]
-        exportfile.write(','.join(header))
-        exportfile.write('\n')
+    header = header[0].decode('utf-8').split('\t')[:5]
+    exportfile.write(','.join(header))
+    exportfile.write('\n')
 
-        # extract element with novoPP >= 0.9 only from vcf files
-        if '.vcf.gz' in file:
-            mutation_list = subprocess.check_output('gunzip -c ' + file + '| grep \'novoPP=0.9\'', shell=True).splitlines()
+    # extract element with novoPP >= 0.9 only from vcf files
+    if '.vcf.gz' in file:
+        mutation_list = subprocess.check_output('gunzip -c ' + file + '| grep \'novoPP=0.9\'', shell=True).splitlines()
+        if len(mutation_list) > 0:
             # iterate through each mutation obtained from grep
             for mutation in mutation_list:
                 # decode the into string and extract the mutation elements
