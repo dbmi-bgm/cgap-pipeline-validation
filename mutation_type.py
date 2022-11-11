@@ -37,7 +37,7 @@ for file in filename:
 
     # extract element with novoPP >= 0.9 only from vcf files
     if '.vcf.gz' in file:
-        mutation_list = subprocess.check_output('gunzip -c ' + file + '| grep \'novoPP=0.9\'', shell=True).splitlines()
+        mutation_list = subprocess.check_output('gunzip -c ' + file + '| grep \'novoPP=0.9\'', shell=True, stderr=None).splitlines()
         # iterate through each mutation obtained from grep
         for mutation in mutation_list:
             # decode the into string and extract the mutation elements
