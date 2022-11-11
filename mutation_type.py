@@ -33,27 +33,26 @@ for file in filename:
     header = header[0].decode('utf-8').split('\t')[:5]
     exportfile.write(','.join(header))
     exportfile.write('\n')
+    print(file[:file.index('.')])
 
     # extract element with novoPP >= 0.9 only from vcf files
     if '.vcf.gz' in file:
-        mutation_list = subprocess.check_output('gunzip -c ' + file + '| grep \'novoPP=0.9\'', shell=True)
-        if len(mutation_list) > 0:
-            mutation_list = mutation_list.splitlines()
-            # iterate through each mutation obtained from grep
-            for mutation in mutation_list:
-                # decode the into string and extract the mutation elements
-                mutation = mutation.decode('utf-8').split('\t')
-                mutation = mutation[:5]
-                print(mutation)
-                exportfile.write(','.join(mutation))
-                exportfile.write('\n')
-                mutation_change = ' > '.join(mutation[-2:])
-                if mutation_change in mutation_change_dict:
-                    mutation_change_dict[mutation_change] += 1
-                else:
-                    mutation_change_dict[mutation_change] = 1
-
+        mutation_list = subprocess.check_output('gunzip -c ' + file + '| grep \'novoPP=0.9\'', shell=True).splitlines()
+        # iterate through each mutation obtained from grep
+        for mutation in mutation_list:
+            # decode the into string and extract the mutation elements
+            mutation = mutation.decode('utf-8').split('\t')
+            mutation = mutation[:5]
+            print(mutation)
+            exportfile.write(','.join(mutation))
             exportfile.write('\n')
+            mutation_change = ' > '.join(mutation[-2:])
+            if mutation_change in mutation_change_dict:
+                mutation_change_dict[mutation_change] += 1
+            else:
+                mutation_change_dict[mutation_change] = 1
+
+        exportfile.write('\n')
 exportfile.close()
 
 
