@@ -4,17 +4,21 @@ import sys
 
 if len(sys.argv) < 2:
     print("Please provide a vcf file to proceed; The format should be python mutation_type.py xxx.vcf.gz xxx.vcf.gz "
-          "etc.")
+          "......export_file_name")
     sys.exit(0)
 else:
     filename = sys.argv[1:]
+    #store export file name
+    export_file = filename[-1]
+
+    filename = filename[:-1]
     for file in filename:
         if '.vcf.gz' not in file or '.vcf' not in file:
             print("Please provide vcf files only")
             sys.exit(0)
 
 mutation_change_dict = dict()
-exportfile = open('Mutation Changes.txt', 'w')
+exportfile = open(export_file + '.txt', 'w')
 
 
 
