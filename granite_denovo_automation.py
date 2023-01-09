@@ -236,11 +236,10 @@ def main():
             temp_df = pd.DataFrame(temp_df, columns=multi_cols)
 
         # insert individual ID into the temporary dataframe
-        identifier = [family_file.loc[family_file['File_ID'] == i].Individual_ID.values.tolist() for i in
+        identifier = [family_file.loc[family_file['File_ID'] == i].Individual_ID.values.item() for i in
                       temp_df.index.tolist()]
 
         # find the role of the individual within the family file
-        print(temp_df.index.tolist())
         role = [family_file.loc[family_file['File_ID'] == i].Individual.values.item() for i in temp_df.index.tolist()]
         # store the individual identifier and their role into the dataframe
         temp_df['', 'individual_ID'] = identifier
