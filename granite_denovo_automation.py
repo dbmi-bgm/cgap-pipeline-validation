@@ -236,7 +236,7 @@ def main():
             temp_df = pd.DataFrame(temp_df, columns=multi_cols)
 
         # insert individual ID into the temporary dataframe
-        identifier = [family_file.loc[family_file['File_ID'] == i].Individual_ID.values.item() for i in
+        identifier = [family_file.loc[family_file['File_ID'] == i].Individual_ID.values.tolist() for i in
                       temp_df.index.tolist()]
 
         # find the role of the individual within the family file
